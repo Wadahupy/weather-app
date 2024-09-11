@@ -5,11 +5,13 @@ import cloudy from "./assets/cloudy.png";
 import rainy from "./assets/rainy.png";
 import snowy from "./assets/snowy.png";
 import sorry from "./assets/weather.svg";
+import { FaLocationDot } from "react-icons/fa6";
 
 const api = {
   key: import.meta.env.REACT_APP_API_KEY,
   base: import.meta.env.REACT_APP_API_BASE_URL,
 };
+
 function App() {
   const [search, setSearch] = useState("");
   const [weather, setWeather] = useState({});
@@ -28,7 +30,7 @@ function App() {
       .then((result) => {
         setWeather(result);
         console.log(result);
-        setFirstSearch(false);
+        setIsFirstSearch(false); // Corrected from setFirstSearch to setIsFirstSearch
       });
   };
 
@@ -93,10 +95,17 @@ function App() {
           isFirstSearch ? "min-h-screen" : ""
         }`} // Center the search bar if it's the first search
       >
+        {/* Show Title "Weather App" if it's the first search */}
+        {isFirstSearch && (
+          <h1 className="text-white text-6xl mb-6 font-bold font-heading">
+            Weather App
+          </h1>
+        )}
+
         {/* Search */}
         <div
           className={`flex flex-row m-4 h-16 w-10/12 md:w-8/12 lg:w-7/12 xl:w-6/12 2xl:w-5/12 place-items-center p-5 rounded-3xl shadow-2xl bg-transparent border-4 backdrop-blur-3xl backdrop-opacity-5 backdrop-brightness-50 ${
-            isFirstSearch ? "mt-0" : "mt-10"
+            isFirstSearch ? "mt-0 mb-40" : "mt-10"
           }`}
         >
           <svg
@@ -123,63 +132,63 @@ function App() {
           </button>
         </div>
 
-        {typeof weather.main != "undefined" ? (
-          <div className="h-full w-10/12 md:w-8/12 lg:w-7/12 xl:w-6/12 2xl:w-5/12 rounded-3xl backdrop-blur-3xl border-4 shadow-2xl bg-opacity-70 flex flex-col place-items-center backdrop-opacity-5 backdrop-brightness-50">
+        {/* Weather Results */}
+        {typeof weather.main !== "undefined" ? (
+          <div className="h-full w-10/12 md:w-8/12 lg:w-7/12 xl:w-6/12 2xl:w-5/12 rounded-3xl backdrop-blur-3xl border-4 shadow-2xl bg-opacity-70 flex flex-col place-items-center backdrop-opacity-5 backdrop-brightness-50 mb-10">
             <div className="flex flex-row mt-10 gap-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="3em"
-                height="3em"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill="#ffffff"
-                  d="M12 3a7 7 0 0 0-7 7c0 2.862 1.782 5.623 3.738 7.762A26 26 0 0 0 12 20.758q.262-.201.615-.49a26 26 0 0 0 2.647-2.504C17.218 15.623 19 12.863 19 10a7 7 0 0 0-7-7m0 20.214l-.567-.39l-.003-.002l-.006-.005l-.02-.014l-.075-.053l-.27-.197a28 28 0 0 1-3.797-3.44C5.218 16.875 3 13.636 3 9.999a9 9 0 0 1 18 0c0 3.637-2.218 6.877-4.262 9.112a28 28 0 0 1-3.796 3.44a17 17 0 0 1-.345.251l-.021.014l-.006.005l-.002.001zM12 8a2 2 0 1 0 0 4a2 2 0 0 0 0-4m-4 2a4 4 0 1 1 8 0a4 4 0 0 1-8 0"
-                />
-              </svg>
-
+              <FaLocationDot color="red" className="size-8 sm:size-12" />
               {/* Location */}
-              <p className="text-white text-5xl font-bold ">{weather.name},</p>
-              <p className="text-white text-5xl"> {weather.sys.country}</p>
+              <p className="text-white text-3xl sm:text-5xl font-bold ">
+                {weather.name},
+              </p>
+              <p className="text-white text-3xl sm:text-5xl">
+                {" "}
+                {weather.sys.country}
+              </p>
             </div>
             {/* time and date */}
-            <p className="text-white text-xl my-5">{getCurrentDate()}</p>
+            <p className="text-white text-sm sm:text-xl my-5 text-center ">
+              {getCurrentDate()}
+            </p>
             <div className="flex flex-col md:flex-col lg:flex-col xl:flex-row text-center">
               {/* Icon */}
               {weatherIcon && (
                 <img
                   src={weatherIcon}
                   alt={weather.weather[0].description}
-                  className="w-80 h-80"
+                  className="w-52 h-52 sm:w-80 sm:h-80"
                 />
               )}
-              <div className="flex flex-col my-auto">
+              <div className="flex flex-col my-auto pt-8 sm:py-0">
                 {/* Temperature */}
                 {weather.main && (
-                  <p className="text-white text-6xl font-bold">
+                  <p className="text-white text-4xl sm:text-6xl font-bold">
                     {Math.trunc(weather.main.temp)}°C
                   </p>
                 )}
                 {/* Condition */}
                 {weather.weather && (
-                  <p className="text-white text-3xl font-semibold my-5">
+                  <p className="text-white text-3xl font-semibold my-2">
                     {weather.weather[0].main}
                   </p>
                 )}
                 {weather.weather && (
                   <p className="text-white text-xl">
-                    ({weather.weather[0].description})
+                    (
+                    {weather.weather[0].description.charAt(0).toUpperCase() +
+                      weather.weather[0].description.slice(1)}
+                    )
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="flex flex-row gap-0 sm:2 md:gap-3 lg:gap-3 xl:gap-5 2xl:gap-24 my-10">
-              <div className="flex flex-col gap-3">
+            <div className="flex flex-col sm:flex-row gap-0 sm:2 md:gap-3 lg:gap-3 xl:gap-5 2xl:gap-24 my-10">
+              <div className="flex flex-col gap-3 mb-4">
                 <div className=" h-20 w-52 flex flex-col rounded-2xl text-center place-content-center">
                   {/* Wind Speed */}
                   {weather.wind && (
-                    <div className="flex flex-row items-center justify-center">
+                    <div className="flex flex-row items-start justify-start sm:items-center sm:justify-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="4em"
@@ -204,7 +213,7 @@ function App() {
                 <div className="h-20 w-52 flex flex-col rounded-2xl text-center place-content-center">
                   {/* Cloud Coverage */}
                   {weather.clouds && (
-                    <div className="flex flex-row items-center justify-center gap-1 ">
+                    <div className="flex flex-row items-start justify-start sm:items-center sm:justify-center gap-1 ">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="4em"
@@ -274,7 +283,7 @@ function App() {
                   <div className="h-20 w-52 flex flex-col rounded-2xl text-center place-content-center">
                     {/* Visibility */}
                     {weather.visibility && (
-                      <div className="flex flex-row items-center justify-center gap-1">
+                      <div className="flex flex-row items-start justify-start sm:items-center sm:justify-center gap-1">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="4em"
@@ -300,7 +309,7 @@ function App() {
                 <div className="h-20 w-52 flex flex-col rounded-2xl text-center place-content-center">
                   {/* Humidity */}
                   {weather.main && (
-                    <div className="flex flex-row items-center justify-center gap-1">
+                    <div className="flex flex-row items-start justify-start sm:items-center sm:justify-center gap-1">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="4em"
